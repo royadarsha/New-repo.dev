@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story | MODENITY</title>
+    <style>
+        /* --- RESET & VARIABLES (MODENITY THEME) --- */
+        :root {
+            --primary-blue: #0f3057;   /* Deep Navy */
+            --secondary-blue: #005b96; /* Lighter Blue */
+            --accent-beige: #e6e2d3;   /* Warm Beige */
+            --bg-beige-light: #f7f6f2; /* Very light beige */
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-white: #fff;
+            --footer-bg: #4a4a4a;      /* Matching the Grey/Dark tone from reference */
+            --footer-text: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+        body {
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- HEADER --- */
+        header { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .top-bar { background: var(--accent-beige); color: var(--primary-blue); text-align: center; font-size: 0.75rem; padding: 8px 0; letter-spacing: 1px; font-weight: 600; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; max-width: 1200px; margin: 0 auto; }
+        .logo { font-size: 1.8rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--primary-blue); }
+        nav ul { display: flex; gap: 25px; }
+        nav a { font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; color: var(--text-dark); position: relative; }
+        nav a::after { content: ''; display: block; width: 0; height: 2px; background: var(--secondary-blue); transition: width .3s; position: absolute; bottom: -5px; left: 0; }
+        nav a:hover::after { width: 100%; }
+        .nav-icons { display: flex; gap: 15px; font-size: 1.1rem; color: var(--primary-blue); }
+        .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            width: 100%; 
+            height: 60vh; 
+            background-color: var(--primary-blue); 
+            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+        }
+        .hero-content { max-width: 800px; padding: 20px; color: #fff; animation: fadeUp 1s ease-out; }
+        .hero-subtitle { font-size: 1rem; color: var(--accent-beige); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 15px; font-weight: 600; }
+        .hero-title { font-size: 4rem; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; line-height: 1.1; margin-bottom: 25px; }
+        .hero-desc { font-size: 1.1rem; color: #ccc; line-height: 1.8; font-weight: 300; max-width: 600px; margin: 0 auto; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- ZIG ZAG FEATURES --- */
+        .stair-container { max-width: 1200px; margin: 80px auto; position: relative; padding: 0 20px; }
+        .step { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 100px; }
+        .step.right { direction: rtl; } 
+        .step.right .step-content { direction: ltr; }
+        .step-inner { position: relative; width: 100%; height: 100%; opacity: 0; transition: 0.8s ease-out; }
+        .step-inner.reveal-left { transform: translateX(-50px); }
+        .step-inner.reveal-right { transform: translateX(50px); }
+        .step-inner.in-view { opacity: 1; transform: translateX(0); }
+        .step img { width: 100%; height: 400px; object-fit: cover; border-radius: 4px; box-shadow: 0 15px 30px rgba(15, 48, 87, 0.1); }
+        .step-content { padding: 20px; }
+        .step-content h3 { font-size: 2rem; color: var(--primary-blue); margin-bottom: 20px; text-transform: uppercase; font-weight: 300; letter-spacing: 1px; }
+        .step-content p { font-size: 1rem; color: #555; line-height: 1.8; }
+
+        /* --- HORIZONTAL ROAD TIMELINE SECTION --- */
+        .timeline-section {
+            padding: 80px 0;
+            background-color: #fff;
+            overflow: hidden; 
+        }
+        .timeline-header { text-align: center; margin-bottom: 60px; }
+        .timeline-title { font-size: 2.5rem; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 4px; font-weight: 700; }
+
+        .road-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 50px;
+            position: relative;
+        }
+
+        .road-map {
+            width: 1400px; 
+            height: 400px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .road-svg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        }
+        
+        .road-path { fill: none; stroke: var(--accent-beige); stroke-width: 12; stroke-linecap: round; }
+        .road-path-active { 
+            fill: none; stroke: var(--primary-blue); stroke-width: 12; stroke-linecap: round;
+            stroke-dasharray: 2000; stroke-dashoffset: 2000; transition: stroke-dashoffset 4s linear; 
+        }
+        .road-dashed { 
+            fill: none; stroke: #fff; stroke-width: 2; stroke-dasharray: 10, 10; opacity: 0; transition: opacity 1s; 
+        }
+
+        .checkpoint {
+            position: absolute; z-index: 2; width: 250px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out;
+        }
+        .checkpoint.visible { opacity: 1; transform: translateY(0); }
+        .checkpoint::before {
+            content: ''; position: absolute; width: 20px; height: 20px; background: var(--primary-blue);
+            border: 4px solid #fff; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .checkpoint.top { bottom: 60%; } 
+        .checkpoint.top::before { bottom: -45px; left: 50%; transform: translateX(-50%); }
+        .checkpoint.bottom { top: 60%; }
+        .checkpoint.bottom::before { top: -45px; left: 50%; transform: translateX(-50%); }
+
+        .checkpoint h4 { font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 5px; font-weight: 700; }
+        .checkpoint p { font-size: 0.9rem; color: #666; line-height: 1.4; }
+
+        /* --- NEW REFERENCE FOOTER --- */
+        footer {
+            background-color: #666; /* Base grey from image */
+            color: #fff;
+            font-size: 0.85rem;
+            position: relative;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px 40px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 1.2fr 0.8fr; /* Columns ratios */
+            gap: 40px;
+        }
+
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #fff; /* White headings */
+        }
+
+        /* Col 1: Information */
+        .info-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            color: #e0e0e0;
+        }
+        .info-icon {
+            width: 20px;
+            margin-right: 15px;
+            opacity: 0.7;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .social-links a {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        .social-links a:hover { opacity: 1; }
+
+        /* Col 2: Company Info (Links) */
+        .link-list li {
+            margin-bottom: 12px;
+        }
+        .link-list a {
+            color: #e0e0e0;
+            transition: 0.2s;
+        }
+        .link-list a:hover {
+            color: var(--accent-beige);
+            padding-left: 5px;
+        }
+
+        /* Col 3: Last News */
+        .news-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .news-thumb {
+            width: 60px;
+            height: 60px;
+            background-color: #444;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .news-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .news-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .news-title {
+            font-size: 0.85rem;
+            line-height: 1.3;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .news-date {
+            font-size: 0.75rem;
+            color: #bbb;
+        }
+
+        /* Col 4: Badges */
+        .badges-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .badge-img {
+            max-width: 100px;
+            opacity: 0.9;
+        }
+        .badge-circle {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Scroll Top Button */
+        .scroll-top-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.2rem;
+        }
+        .scroll-top-btn:hover {
+            background-color: var(--primary-blue);
+        }
+
+        /* Responsive Footer */
+        @media (max-width: 900px) {
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            .badges-col {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* --- FOOTER OVERRIDE FOR MODENITY THEME --- */
+        /* Applying the navy blue instead of grey to match brand */
+        footer { background-color: #4f5b66; /* Dark slate closer to image */ }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-container nav { display: none; }
+            .mobile-toggle { display: block; }
+            
+            .step, .step.right { grid-template-columns: 1fr; gap: 30px; text-align: center; direction: ltr; }
+            .step.right .step-content { text-align: center; }
+            .step img { height: 250px; }
+
+            /* On mobile, keep it horizontal scrollable */
+            .road-map { transform: scale(0.8); transform-origin: left top; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">PREMIUM DESIGNER IMPORTED SURFACES & TILES</div>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">MODENITY</div>
+            <nav>
+                <ul>
+                    <li><a href="main homepage.html">Home</a></li>
+                    <li><a href="OUR COLLECTIONS.html">Collections</a></li>
+                    <li><a href="curated works remastered.html">Curated Works</a></li>
+                    <li><a href="new vault.html">The Vault</a></li>
+                    <li><a href="our story.html" style="color:var(--secondary-blue);">Our Story</a></li>
+                </ul>
+            </nav>
+            <div class="nav-icons">
+                <a href="#">&#128269;</a>
+                <a href="#">&#128722;</a>
+                <div class="mobile-toggle">&#9776;</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h2 class="hero-subtitle">The Legacy of Modenity</h2>
+            <h1 class="hero-title">Our Story</h1>
+            <p class="hero-desc">From inception to innovation. A journey defined by craftsmanship, integrity, and the relentless pursuit of ceramic perfection.</p>
+        </div>
+    </section>
+
+    <div class="stair-container">
+        <div class="step">
+            <div class="step-inner reveal-left">
+                <img src="ChatGPT Image Dec 4, 2025, 12_07_36 PM.jpeg" alt="White Label Brand">
+            </div>
+            <div class="step-content step-inner reveal-right">
+                <h3>White Label Brand</h3>
+                <p>“We are the curators of the ecosystem”. We bridge the gap between world-class manufacturing and ethical sourcing.</p>
+            </div>
+        </div>
+        <div class="step right">
+            <div class="step-inner reveal-right">
+                <img src="price inclusive.jpeg" alt="Price Inclusive Model">
+            </div>
+            <div class="step-content step-inner reveal-left">
+                <h3>Price Inclusive Model</h3>
+                <p>“Integrity is our currency” What you see is what you pay. No hidden shadows, just the pure value.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-inner reveal-left">
+                <img src="lab tested.jpeg" alt="Lab Tested Products">
+            </div>
+            <div class="step-content step-inner reveal-right">
+                <h3>Lab Tested Resilience</h3>
+                <p>Every batch is rigorously lab tested, ensuring that the elegance you install today endures for a lifetime.</p>
+            </div>
+        </div>
+        <div class="step right">
+            <div class="step-inner reveal-right">
+                <img src="supply chain.jpeg" alt="Logistics">
+            </div>
+            <div class="step-content step-inner reveal-left">
+                <h3>End-to-End Logistics</h3>
+                <p>With our own dedicated warehousing and a robust supply chain, we ensure your order is handled with care.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-inner reveal-left">
+                <img src="in house.jpeg" alt="In-House R&D">
+            </div>
+            <div class="step-content step-inner reveal-right">
+                <h3>In-House R&D</h3>
+                <p>Our dedicated R&D team creates unique patterns and textures, ensuring our products stand out in the market.</p>
+            </div>
+        </div>
+        <div class="step right">
+            <div class="step-inner reveal-right">
+                <img src="fre sample.jpeg" alt="Free Samples">
+            </div>
+            <div class="step-content step-inner reveal-left">
+                <h3>Free Sample Delivery</h3>
+                <p>We want you to be sure. We offer free delivery of samples to your doorstep anywhere in India.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-inner reveal-left">
+                <img src="1000 +.jpeg" alt="All India Delivery">
+            </div>
+            <div class="step-content step-inner reveal-right">
+                <h3>1000+ Pincodes Covered</h3>
+                <p>Whether you are in a metro city or a remote town, we deliver to 1000+ pincodes across India.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="timeline-section" id="journeySection">
+        <div class="timeline-header">
+            <h2 class="timeline-title">Our Journey</h2>
+            <p style="color:#777;">Scroll right to follow the path.</p>
+        </div>
+
+        <div class="road-scroll-container">
+            <div class="road-map">
+                <svg class="road-svg" viewBox="0 0 1400 400" preserveAspectRatio="none">
+                    <path class="road-path" d="M0,200 C200,200 200,100 400,100 C600,100 600,300 800,300 C1000,300 1000,200 1200,200 C1300,200 1350,200 1400,200" />
+                    <path id="activeRoad" class="road-path-active" d="M0,200 C200,200 200,100 400,100 C600,100 600,300 800,300 C1000,300 1000,200 1200,200 C1300,200 1350,200 1400,200" />
+                    <path id="dashedRoad" class="road-dashed" d="M0,200 C200,200 200,100 400,100 C600,100 600,300 800,300 C1000,300 1000,200 1200,200 C1300,200 1350,200 1400,200" />
+                </svg>
+
+                <div class="checkpoint top" style="left: 50px; bottom: 55%;">
+                    <h4>2019</h4>
+                    <p>Inception of Modenity.</p>
+                </div>
+                <div class="checkpoint bottom" style="left: 300px; top: 35%;">
+                    <h4>2020</h4>
+                    <p>First manufacturing plant.</p>
+                </div>
+                <div class="checkpoint top" style="left: 550px; bottom: 35%;">
+                    <h4>2021</h4>
+                    <p>Launch of Blue Series.</p>
+                </div>
+                <div class="checkpoint bottom" style="left: 800px; top: 80%;">
+                    <h4>2022</h4>
+                    <p>Global Export Awards.</p>
+                </div>
+                <div class="checkpoint top" style="left: 1050px; bottom: 55%;">
+                    <h4>2023</h4>
+                    <p>The Vault Digital Launch.</p>
+                </div>
+                <div class="checkpoint bottom" style="left: 1250px; top: 55%;">
+                    <h4>2025</h4>
+                    <p>1000+ Pincodes Covered.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            
+            <div class="footer-col">
+                <h4>Information</h4>
+                <ul class="info-list">
+                    <li><span class="info-icon">&#128100;</span> Modenity Ceramics</li>
+                    <li><span class="info-icon">&#127968;</span> 101, Blue Horizon Plaza, Design District, Mumbai-400 057, India</li>
+                    <li><span class="info-icon">&#128222;</span> (+91) 22 2612 2960</li>
+                    <li><span class="info-icon">&#128224;</span> (+91) 98 7654 3210</li>
+                    <li><span class="info-icon">&#9993;</span> info@modenity.com</li>
+                </ul>
+                <div class="social-links">
+                    <a href="#">&#128247;</a> <a href="#">&#128188;</a> <a href="#">&#128204;</a> </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Company Information</h4>
+                <ul class="link-list">
+                    <li><a href="#">Company</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Collections</a></li>
+                    <li><a href="#">Projects</a></li>
+                    <li><a href="#">Downloads</a></li>
+                    <li><a href="#">Ethical channel</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Last News</h4>
+                
+                <div class="news-item">
+                    <div class="news-thumb">
+                        <img src="https://placehold.co/60x60/333/fff?text=Event" alt="News">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">Modenity at Acetech 2025</div>
+                        <div class="news-date">5 December, 2025</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-thumb">
+                        <img src="https://placehold.co/60x60/0f3057/fff?text=Award" alt="News">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">Best Sustainable Brand Award</div>
+                        <div class="news-date">22 October, 2025</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-thumb">
+                        <img src="https://placehold.co/60x60/e6e2d3/333?text=Report" alt="News">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">Sustainability Report 2024</div>
+                        <div class="news-date">15 September, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-col badges-col">
+                <div class="badge-circle" style="border: 2px solid #fff;">
+                    <div style="font-size:1.5rem; color:#0f3057;">Gavi</div>
+                    <div>Partner</div>
+                </div>
+                
+                <div class="badge-circle">
+                    <div>SILVER</div>
+                    <div style="font-weight:400; font-size:0.6rem;">EcoVadis</div>
+                    <div>2025</div>
+                </div>
+
+                <div style="background:#fff; padding:10px; font-weight:bold; color:#000;">
+                    ISO 9001
+                </div>
+            </div>
+
+        </div>
+
+        <div class="scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+            &#8593;
+        </div>
+    </footer>
+
+    <script>
+        // --- SCROLL ANIMATIONS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -100px 0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Reveal Zig Zag Steps
+                        if (entry.target.classList.contains('step-inner')) {
+                            entry.target.classList.add('in-view');
+                        }
+                        // Trigger Road Animation
+                        if (entry.target.id === 'journeySection') {
+                            animateRoad();
+                            obs.unobserve(entry.target);
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe Zig Zag Elements
+            document.querySelectorAll('.step-inner').forEach(el => observer.observe(el));
+            
+            // Observe Timeline Section
+            const journeySection = document.getElementById('journeySection');
+            if(journeySection) observer.observe(journeySection);
+        });
+
+        // --- ROAD DRAWING ANIMATION LOGIC ---
+        function animateRoad() {
+            const activePath = document.getElementById('activeRoad');
+            const dashedPath = document.getElementById('dashedRoad');
+            const checkpoints = document.querySelectorAll('.checkpoint');
+            
+            // 1. Reset stroke dashoffset (Start drawing)
+            activePath.style.strokeDashoffset = '0'; // Matches CSS transition duration (4s)
+            
+            // 2. Show dashed line after drawing starts
+            setTimeout(() => {
+                dashedPath.style.opacity = '0.5';
+            }, 500);
+
+            // 3. Reveal checkpoints sequentially based on timing of the draw
+            const delays = [100, 800, 1600, 2400, 3200, 3800];
+
+            checkpoints.forEach((cp, index) => {
+                setTimeout(() => {
+                    cp.classList.add('visible');
+                }, delays[index]);
+            });
+        }
+    </script>
+</body>
+</html>

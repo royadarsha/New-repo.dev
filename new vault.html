@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE VAULT | MODENITY Archives</title>
+    <style>
+        /* --- RESET & VARIABLES (MODENITY THEME) --- */
+        :root {
+            --primary-blue: #0f3057;   /* Deep Navy */
+            --secondary-blue: #005b96; /* Lighter Blue */
+            --accent-beige: #e6e2d3;   /* Warm Beige */
+            --bg-beige-light: #f7f6f2; /* Very light beige */
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-white: #fff;
+            --footer-bg: #4a4a4a;      /* Matching the Grey/Dark tone from reference */
+            --footer-text: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+
+        body {
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+
+        /* --- HEADER --- */
+        header { background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .top-bar { background: var(--accent-beige); color: var(--primary-blue); text-align: center; font-size: 0.75rem; padding: 8px 0; letter-spacing: 1px; font-weight: 600; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; max-width: 1200px; margin: 0 auto; }
+        .logo { font-size: 1.8rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--primary-blue); }
+        nav ul { display: flex; gap: 25px; }
+        nav a { font-size: 0.85rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; color: var(--text-dark); position: relative; }
+        nav a::after { content: ''; display: block; width: 0; height: 2px; background: var(--secondary-blue); transition: width .3s; position: absolute; bottom: -5px; left: 0; }
+        nav a:hover::after { width: 100%; }
+        .nav-icons { display: flex; gap: 15px; font-size: 1.1rem; color: var(--primary-blue); }
+        .mobile-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background-color: var(--primary-blue);
+            height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            background-image: url('https://placehold.co/1600x600/0f3057/ffffff?text=Design+Archives');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .hero::before { content: ''; position: absolute; inset: 0; background: rgba(15, 48, 87, 0.85); }
+        .hero-content { position: relative; z-index: 2; padding: 20px; animation: fadeUp 1s ease-out; }
+        .hero h1 { font-size: 3rem; font-weight: 300; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 10px; }
+        .hero p { font-size: 1rem; color: var(--accent-beige); letter-spacing: 2px; text-transform: uppercase; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- CATALOGUE CONTENT --- */
+        .catalogue-container { max-width: 1200px; margin: 0 auto; padding: 80px 20px; }
+        .category-section { margin-bottom: 80px; }
+        .category-header { display: flex; align-items: center; margin-bottom: 40px; border-bottom: 2px solid var(--accent-beige); padding-bottom: 15px; }
+        .category-title { font-size: 1.8rem; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 2px; margin-right: 20px; }
+        .category-count { background: var(--secondary-blue); color: #fff; font-size: 0.8rem; padding: 2px 8px; border-radius: 12px; font-weight: 700; }
+
+        /* --- STACK LAYOUT --- */
+        .items-stack { display: flex; flex-direction: column; gap: 30px; }
+        .master-wrapper { border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden; background: #fff; transition: box-shadow 0.3s; }
+        .master-wrapper:hover { box-shadow: 0 15px 30px rgba(15, 48, 87, 0.1); }
+        .catalogue-item { display: flex; cursor: pointer; position: relative; height: 160px; }
+        .item-visual { width: 140px; background-color: var(--bg-beige-light); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .item-visual img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.5s; }
+        .catalogue-item:hover .item-visual img { transform: scale(1.1); opacity: 1; }
+        .range-badge { position: absolute; top: 10px; left: 10px; font-size: 0.6rem; text-transform: uppercase; padding: 3px 6px; font-weight: 700; z-index: 2; }
+        .basic .range-badge { background: #eee; color: #555; }
+        .premium .range-badge { background: var(--primary-blue); color: #fff; }
+        .collection .range-badge { background: var(--secondary-blue); color: #fff; }
+        .item-content { flex: 1; padding: 25px; display: flex; flex-direction: column; justify-content: center; }
+        .item-content h3 { font-size: 1.3rem; color: var(--primary-blue); margin-bottom: 5px; text-transform: uppercase; }
+        .item-desc { font-size: 0.85rem; color: #777; }
+        .icon-toggle { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border: 1px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--secondary-blue); font-size: 1.2rem; }
+        .master-wrapper.active .icon-toggle { transform: translateY(-50%) rotate(180deg); background: var(--primary-blue); color: #fff; }
+        .sub-range-area { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; background-color: var(--bg-beige-light); }
+        .sub-range-inner { padding: 30px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .range-card { background: #fff; padding: 15px; border: 1px solid #e6e2d3; cursor: pointer; transition: 0.2s; text-align: center; }
+        .range-card:hover { transform: translateY(-3px); border-color: var(--primary-blue); }
+        .range-card img { height: 100px; width: 100%; object-fit: cover; margin-bottom: 10px; background: #eee; }
+        .range-card h4 { font-size: 0.9rem; color: var(--primary-blue); margin-bottom: 2px; }
+        .range-card span { font-size: 0.7rem; color: #999; text-transform: uppercase; }
+
+        /* --- ASSET BROCHURES --- */
+        .brochure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .brochure-item { padding: 20px; border: 1px solid #eee; background: #fff; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .brochure-item:hover { border-color: var(--primary-blue); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .brochure-icon { font-size: 2rem; color: var(--accent-beige); margin-bottom: 15px; }
+        .brochure-item h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; color: var(--primary-blue); }
+        .brochure-meta { font-size: 0.75rem; color: #888; display: flex; justify-content: space-between; margin-top: 15px; border-top: 1px solid #f5f5f5; padding-top: 10px; }
+        .dl-arrow { position: absolute; top: 20px; right: 20px; opacity: 0; transition: 0.3s; color: var(--secondary-blue); }
+        .brochure-item:hover .dl-arrow { opacity: 1; transform: translateY(2px); }
+
+        /* --- NEW REFERENCE FOOTER --- */
+        footer {
+            background-color: #666; /* Base grey from image */
+            color: #fff;
+            font-size: 0.85rem;
+            position: relative;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px 40px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 1.2fr 0.8fr; /* Columns ratios */
+            gap: 40px;
+        }
+
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #fff; /* White headings */
+        }
+
+        /* Col 1: Information */
+        .info-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            color: #e0e0e0;
+        }
+        .info-icon {
+            width: 20px;
+            margin-right: 15px;
+            opacity: 0.7;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .social-links a {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        .social-links a:hover { opacity: 1; }
+
+        /* Col 2: Company Info (Links) */
+        .link-list li {
+            margin-bottom: 12px;
+        }
+        .link-list a {
+            color: #e0e0e0;
+            transition: 0.2s;
+        }
+        .link-list a:hover {
+            color: var(--accent-beige);
+            padding-left: 5px;
+        }
+
+        /* Col 3: Last News */
+        .news-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .news-thumb {
+            width: 60px;
+            height: 60px;
+            background-color: #444;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .news-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .news-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .news-title {
+            font-size: 0.85rem;
+            line-height: 1.3;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .news-date {
+            font-size: 0.75rem;
+            color: #bbb;
+        }
+
+        /* Col 4: Badges */
+        .badges-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .badge-img {
+            max-width: 100px;
+            opacity: 0.9;
+        }
+        .badge-circle {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Scroll Top Button */
+        .scroll-top-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.2rem;
+        }
+        .scroll-top-btn:hover {
+            background-color: var(--primary-blue);
+        }
+
+        /* Responsive Footer */
+        @media (max-width: 900px) {
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            .badges-col {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* --- FOOTER OVERRIDE FOR MODENITY THEME --- */
+        /* Applying the navy blue instead of grey to match brand */
+        footer { background-color: #4f5b66; /* Dark slate closer to image, but let's tint it */ }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">PREMIUM DESIGNER IMPORTED SURFACES & TILES</div>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">MODENITY</div>
+            <nav>
+                <ul>
+                    <li><a href="main homepage.html">Home</a></li>
+                    <li><a href="OUR COLLECTIONS.html">Collections</a></li>
+                    <li><a href="curated works remastered.html">Curated Works</a></li>
+                    <li><a href="new vault.html" style="color:var(--secondary-blue);">The Vault</a></li>
+                    <li><a href="our story.html">Our Story</a></li>
+                </ul>
+            </nav>
+            <div class="nav-icons">
+                <a href="#">&#128269;</a>
+                <a href="#">&#128722;</a>
+                <div class="mobile-toggle">&#9776;</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Master Catalogues</h1>
+            <p>Comprehensive Guides & Technical Specifications</p>
+        </div>
+    </section>
+
+    <div class="catalogue-container">
+
+        <section class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">Wall Collections</h2>
+                <span class="category-count">02 Files</span>
+            </div>
+
+            <div class="items-stack">
+                <div class="master-wrapper">
+                    <div class="catalogue-item basic" onclick="toggleSubRange('sub-intro', this)">
+                        <div class="item-visual">
+                            <span class="range-badge">Basic Range</span>
+                            <img src="https://placehold.co/200x300/e6e2d3/0f3057?text=Intro" alt="Intro Catalog">
+                        </div>
+                        <div class="item-content">
+                            <h3>Intro Series</h3>
+                            <p class="item-desc">Essential wall claddings for modern residential spaces. Click to view ranges.</p>
+                            <div class="icon-toggle">&#9662;</div>
+                        </div>
+                    </div>
+                    <div id="sub-intro" class="sub-range-area">
+                        <div class="sub-range-inner">
+                            <div class="range-card">
+                                <img src="https://placehold.co/150x100/f0f0f0/333?text=Pastel" alt="Pastel">
+                                <h4>Pastel Edit</h4>
+                                <span>Matte Finish</span>
+                            </div>
+                            <div class="range-card">
+                                <img src="https://placehold.co/150x100/e0e0e0/333?text=Neutral" alt="Neutral">
+                                <h4>Neutral Base</h4>
+                                <span>Satin Finish</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="master-wrapper">
+                    <div class="catalogue-item premium" onclick="toggleSubRange('sub-storyie', this)">
+                        <div class="item-visual">
+                            <span class="range-badge">Premium Range</span>
+                            <img src="https://placehold.co/200x300/0f3057/ffffff?text=Storyie" alt="Storyie Catalog">
+                        </div>
+                        <div class="item-content">
+                            <h3>Storie Series</h3>
+                            <p class="item-desc">Luxury textures and high-end finishes for feature walls.</p>
+                            <div class="icon-toggle">&#9662;</div>
+                        </div>
+                    </div>
+                    <div id="sub-storyie" class="sub-range-area">
+                        <div class="sub-range-inner">
+                            <div class="range-card">
+                                <img src="https://placehold.co/150x100/0f3057/fff?text=Marble" alt="Marble">
+                                <h4>Royal Marble</h4>
+                                <span>High Gloss</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">Floor Collections</h2>
+                <span class="category-count">02 Files</span>
+            </div>
+
+            <div class="items-stack">
+                <div class="master-wrapper">
+                    <div class="catalogue-item collection" onclick="toggleSubRange('sub-floor1', this)">
+                        <div class="item-visual">
+                            <span class="range-badge">Vol. I</span>
+                            <img src="https://placehold.co/200x300/f7f6f2/005b96?text=Floor+I" alt="Floor Vol 1">
+                        </div>
+                        <div class="item-content">
+                            <h3>Floor Decor Vol I</h3>
+                            <p class="item-desc">Classic porcelain and ceramic floor solutions.</p>
+                            <div class="icon-toggle">&#9662;</div>
+                        </div>
+                    </div>
+                    <div id="sub-floor1" class="sub-range-area">
+                        <div class="sub-range-inner">
+                            <div class="range-card">
+                                <img src="https://placehold.co/150x100/8b4513/fff?text=Wood" alt="Wood">
+                                <h4>Oak Planks</h4>
+                                <span>Wooden Finish</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="master-wrapper">
+                    <div class="catalogue-item collection" onclick="toggleSubRange('sub-floor2', this)">
+                        <div class="item-visual">
+                            <span class="range-badge">Vol. II</span>
+                            <img src="https://placehold.co/200x300/333/fff?text=Floor+II" alt="Floor Vol 2">
+                        </div>
+                        <div class="item-content">
+                            <h3>Floor Decor Vol II</h3>
+                            <p class="item-desc">Large format slabs and industrial finishes.</p>
+                            <div class="icon-toggle">&#9662;</div>
+                        </div>
+                    </div>
+                    <div id="sub-floor2" class="sub-range-area">
+                        <div class="sub-range-inner">
+                            <div class="range-card">
+                                <img src="https://placehold.co/150x100/555/fff?text=Slate" alt="Slate">
+                                <h4>Noir Slate</h4>
+                                <span>R11 Anti-Slip</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">Asset Brochures</h2>
+                <span class="category-count">Downloads</span>
+            </div>
+
+            <div class="brochure-grid">
+                <div class="brochure-item" onclick="alert('Downloading Technical Guide...')">
+                    <div class="dl-arrow">⬇</div>
+                    
+                    <h4>Technical Installation Guide</h4>
+                    <div class="brochure-meta">
+                        <span>PDF</span>
+                        <span>4.2 MB</span>
+                    </div>
+                </div>
+                <div class="brochure-item" onclick="alert('Downloading Maintenance Manual...')">
+                    <div class="dl-arrow">⬇</div>
+                    
+                    <h4>Maintenance Manual</h4>
+                    <div class="brochure-meta">
+                        <span>PDF</span>
+                        <span>1.5 MB</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            
+            <div class="footer-col">
+                <h4>Information</h4>
+                <ul class="info-list">
+                    <li><span class="info-icon">&#128100;</span> Modenity Ceramics</li>
+                    <li><span class="info-icon">&#127968;</span> 101, Blue Horizon Plaza, Design District, Mumbai-400 057, India</li>
+                    <li><span class="info-icon">&#128222;</span> (+91) 22 2612 2960</li>
+                    <li><span class="info-icon">&#128224;</span> (+91) 98 7654 3210</li>
+                    <li><span class="info-icon">&#9993;</span> info@modenity.com</li>
+                </ul>
+                <div class="social-links">
+                    <a href="#">&#128247;</a> <a href="#">&#128188;</a> <a href="#">&#128204;</a> </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Company Information</h4>
+                <ul class="link-list">
+                    <li><a href="main homepage.html">Homepage</a></li>
+                    <li><a href="OUR COLLECTIONS.html">Our collections</a></li>
+                    <li><a href="curated works remastered.html">Curated works</a></li>
+                    <li><a href="new vault.html">The vault</a></li>
+                    <li><a href="our story.html">Our story</a></li>
+                   
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Last News</h4>
+                
+                <div class="news-item">
+                    <div class="news-thumb">
+                        <img src="https://placehold.co/60x60/333/fff?text=Event" alt="News">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">Modenity at Acetech 2025</div>
+                        <div class="news-date">5 December, 2025</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-thumb">
+                        <img src="https://placehold.co/60x60/0f3057/fff?text=Award" alt="News">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">Best Sustainable Brand Award</div>
+                        <div class="news-date">22 October, 2025</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-thumb">
+                        <img src="https://placehold.co/60x60/e6e2d3/333?text=Report" alt="News">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-title">Sustainability Report 2024</div>
+                        <div class="news-date">15 September, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-col badges-col">
+                <div class="badge-circle" style="border: 2px solid #fff;">
+                    <div style="font-size:1.5rem; color:#0f3057;">Gavi</div>
+                    <div>Partner</div>
+                </div>
+                
+                <div class="badge-circle">
+                    <div>SILVER</div>
+                    <div style="font-weight:400; font-size:0.6rem;">EcoVadis</div>
+                    <div>2025</div>
+                </div>
+
+                <div style="background:#fff; padding:10px; font-weight:bold; color:#000;">
+                    ISO 9001
+                </div>
+            </div>
+
+        </div>
+
+        <div class="scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+            &#8593;
+        </div>
+    </footer>
+
+    <script>
+        function toggleSubRange(id, cardElement) {
+            const content = document.getElementById(id);
+            const parentWrapper = cardElement.parentElement;
+
+            if (content.style.maxHeight) {
+                // Close
+                content.style.maxHeight = null;
+                parentWrapper.classList.remove('active');
+            } else {
+                // Open
+                content.style.maxHeight = content.scrollHeight + "px";
+                parentWrapper.classList.add('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
